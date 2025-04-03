@@ -10,6 +10,13 @@ app.use(express.json());
 
 app.use('/api', operatorRoutes);
 
+app.use('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'API is running'
+  });
+});
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({

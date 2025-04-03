@@ -66,10 +66,10 @@ class TurkcellService {
         timeout: 30000
       });
 
-      await sleep(7000);
+      await sleep(9000);
 
       try {
-        await page.waitForSelector('efilli-layout-dynamic', { timeout: 2000 });
+        await page.waitForSelector('efilli-layout-dynamic', { timeout: 3000 });
         
         await page.evaluate(() => {
           const shadowHost = document.querySelector('efilli-layout-dynamic');
@@ -87,7 +87,7 @@ class TurkcellService {
 
       await sleep(250);
 
-      await page.waitForSelector('input[class*="maskedInput__input"]', { timeout: 5000 });
+      await page.waitForSelector('input[class*="maskedInput__input"]', { timeout: 12000 });
 
       await page.type('input[class*="maskedInput__input"]', phoneNumber, { delay: 75 });
       await sleep(1500);

@@ -73,16 +73,16 @@ class TurkTelekomService {
       await page.setDefaultNavigationTimeout(60000);
 
       await page.goto('https://onlineislemler.turktelekom.com.tr/mps/portal?cmd=kkliPaketSatisGuest3D', {
-        waitUntil: ['domcontentloaded', 'networkidle2'],
-        timeout: 60000
+        waitUntil: ['domcontentloaded'],
+        timeout: 30000
       });
-
+      
       await page.waitForSelector('input#msisdn', { visible: true });
 
-      await page.type('input#msisdn', phoneNumber, { delay: 100 });
+      await page.type('input#msisdn', phoneNumber, { delay: 50 });
 
       await page.waitForSelector('img#img_captcha', { visible: true });
-      await sleep(250);
+      await sleep(100);
 
       const captchaElement = await page.$('img#img_captcha');
       const captchaBase64 = await captchaElement.screenshot({
@@ -92,11 +92,11 @@ class TurkTelekomService {
       let captchaSolution = await CaptchaSolver.solveCaptcha(captchaBase64);
       captchaSolution = captchaSolution.replace(/[^0-9]/g, '');
 
-      await page.type('input#authCode', captchaSolution, { delay: 100 });
-      await sleep(500);
+      await page.type('input#authCode', captchaSolution, { delay: 50 });
+      await sleep(100);
 
       await page.click('input#submit1');
-      await sleep(3000);
+      await sleep(2500);
 
       let result = {
         hasDebt: false,
@@ -104,7 +104,7 @@ class TurkTelekomService {
       };
 
       try {
-        await page.waitForSelector('#modal-body-content p', { timeout: 3000 });
+        await page.waitForSelector('#modal-body-content p', { timeout: 2000 });
         const content = await page.$eval('#modal-body-content p', el => el.textContent).catch(() => "");
         if (content && (content.includes('faturasız hat sahipleri') || content.includes('gerçekleştirilemiyor') || content.includes('Güvenlik kodunu'))) {
           await browser.close();
@@ -132,7 +132,7 @@ class TurkTelekomService {
         timeout: 30000 
       }).catch(e => console.log("Seçici bulunamadı:", e.message));
 
-      await sleep(1000);
+      await sleep(100);
 
       try {
         const errorContent = await paymentPage.$eval('.info-error p', el => el.textContent).catch(() => "");

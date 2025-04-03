@@ -21,7 +21,7 @@ class TurkcellService {
     });
 
     try {
-        phoneNumber = phoneNumber.substring(1);
+      phoneNumber = phoneNumber.substring(1);
         
       const page = await browser.newPage();
       
@@ -62,12 +62,14 @@ class TurkcellService {
       });
 
       await page.goto('https://www.turkcell.com.tr/yukle/tl-paket-yukle', {
-        waitUntil: ['domcontentloaded', 'networkidle2'],
-        timeout: 60000
+        waitUntil: ['domcontentloaded'],
+        timeout: 30000
       });
 
+      await sleep(7000);
+
       try {
-        await page.waitForSelector('efilli-layout-dynamic', { timeout: 3000 });
+        await page.waitForSelector('efilli-layout-dynamic', { timeout: 2000 });
         
         await page.evaluate(() => {
           const shadowHost = document.querySelector('efilli-layout-dynamic');
@@ -83,11 +85,11 @@ class TurkcellService {
         console.log('Cookie popup bulunamadı veya zaten kabul edilmiş olabilir:', error);
       }
 
-      await sleep(500);
+      await sleep(250);
 
       await page.waitForSelector('input[class*="maskedInput__input"]', { timeout: 5000 });
 
-      await page.type('input[class*="maskedInput__input"]', phoneNumber, { delay: 100 });
+      await page.type('input[class*="maskedInput__input"]', phoneNumber, { delay: 75 });
       await sleep(1500);
 
       let captchaElement = null;
@@ -106,7 +108,7 @@ class TurkcellService {
 
       const captchaSolution = await CaptchaSolver.solveCaptcha(captchaBase64);
 
-      await page.type('div[class*="AppCaptchaWrapper__captchaControl"] input', captchaSolution, { delay: 100 });
+      await page.type('div[class*="AppCaptchaWrapper__captchaControl"] input', captchaSolution, { delay: 50 });
       await sleep(500);
 
       await page.waitForSelector('button[class*="captchaButton"]', { timeout: 7000 });
@@ -118,7 +120,7 @@ class TurkcellService {
           button.click();
         }
       });
-      await sleep(2000);
+      await sleep(1000);
 
       let result = {
         hasDebt: false,
@@ -132,14 +134,14 @@ class TurkcellService {
           });
     
           await page.click('div[class*="package-card_colClassName"]');
-          await sleep(750);
+          await sleep(500);
     
           await page.waitForSelector('button[class*="basket-amount-bar"]', { timeout: 4000 });
           await page.click('button[class*="basket-amount-bar"]');
-          await sleep(1000);
+          await sleep(500);
     
           const debtPopup = await page.waitForSelector('.ant-modal-content', { 
-            timeout: 4000 
+            timeout: 4500 
           }).then(() => page.$eval('.ant-modal-content', el => el.textContent))
             .catch(() => null);
     

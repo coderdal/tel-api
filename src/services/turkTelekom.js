@@ -16,7 +16,8 @@ class TurkTelekomService {
         '--disable-gpu',
         '--window-size=1920x1080',
         `--proxy-server=${proxyConfig.server}`
-      ]
+      ],
+      executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     });
 
     const directBrowser = await puppeteer.launch({
@@ -28,7 +29,8 @@ class TurkTelekomService {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu',
         '--window-size=1920x1080'
-      ]
+      ],
+      executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     });
 
     try {

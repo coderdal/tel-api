@@ -16,7 +16,8 @@ class TurkcellService {
         '--disable-gpu',
         '--window-size=1920x1080',
         `--proxy-server=${proxyConfig.server}`
-      ]
+      ],
+      executablePath: process.env.NODE_ENV === 'production' ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
     });
 
     try {

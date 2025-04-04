@@ -157,6 +157,8 @@ class TurkcellService {
               result.debtAmount = parseInt(debtMatch[1]);
               result.currency = "TL";
             } else if (debtPopup.includes("Güvenlik kodu")) {
+              console.log("Güvenlik kodu");
+              
               result.hasDebt = false;
               result.debtAmount = null;
               result.invalid = true;

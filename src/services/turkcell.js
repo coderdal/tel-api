@@ -7,7 +7,7 @@ class TurkcellService {
   static async checkPackagesAndDebt(phoneNumber) {
     const proxyConfig = getProxyConfig();
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: 'new',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -108,8 +108,6 @@ class TurkcellService {
 
       await page.type('div[class*="AppCaptchaWrapper__captchaControl"] input', captchaSolution, { delay: 50 });
       await sleep(500);
-
-     await sleep(10000);
 
       await page.waitForSelector('button[class*="captchaButton"]', { timeout: 7000 });
       await page.click('button[class*="captchaButton"]');

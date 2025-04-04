@@ -117,6 +117,10 @@ class TurkTelekomService {
       
       const iframeSrc = await page.$eval('#pgw-iframe', iframe => iframe.src);
       
+      await sleep(200);
+
+      await browser.close();
+      
       const paymentPage = await directBrowser.newPage();
       
       await paymentPage.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');

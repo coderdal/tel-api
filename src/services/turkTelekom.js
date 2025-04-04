@@ -74,7 +74,7 @@ class TurkTelekomService {
 
       await page.goto('https://onlineislemler.turktelekom.com.tr/mps/portal?cmd=kkliPaketSatisGuest3D', {
         waitUntil: ['domcontentloaded'],
-        timeout: 30000
+        timeout: 45000
       });
       
       await page.waitForSelector('input#msisdn', { visible: true });
@@ -104,7 +104,7 @@ class TurkTelekomService {
       };
 
       try {
-        await page.waitForSelector('#modal-body-content p', { timeout: 2000 });
+        await page.waitForSelector('#modal-body-content p', { timeout: 3000 });
         const content = await page.$eval('#modal-body-content p', el => el.textContent).catch(() => "");
         if (content && (content.includes('faturasız hat sahipleri') || content.includes('gerçekleştirilemiyor') || content.includes('Güvenlik kodunu'))) {
           await browser.close();
@@ -113,7 +113,7 @@ class TurkTelekomService {
         }
       } catch (error) {}
       
-      await page.waitForSelector('#pgw-iframe', { timeout: 8000 });
+      await page.waitForSelector('#pgw-iframe', { timeout: 10000 });
       
       const iframeSrc = await page.$eval('#pgw-iframe', iframe => iframe.src);
       
@@ -129,7 +129,7 @@ class TurkTelekomService {
       await paymentPage.waitForSelector('body', { timeout: 10000 });
       
       await paymentPage.waitForSelector('.info-error p, #offer_0, #offer_1, #offer_2, #offer_3, #modal-body-content', { 
-        timeout: 30000 
+        timeout: 45000 
       }).catch(e => console.log("Seçici bulunamadı:", e.message));
 
       await sleep(100);

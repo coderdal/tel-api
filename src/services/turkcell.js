@@ -109,7 +109,7 @@ class TurkcellService {
       await page.type('div[class*="AppCaptchaWrapper__captchaControl"] input', captchaSolution, { delay: 50 });
       await sleep(500);
 
-      await page.waitForSelector('button[class*="captchaButton"]', { timeout: 7000 });
+      await page.waitForSelector('button[class*="captchaButton"]', { timeout: 8000 });
       await page.click('button[class*="captchaButton"]');
 
       await page.evaluate(() => {
@@ -129,7 +129,7 @@ class TurkcellService {
       try {
           const packagesList = [];
           await page.waitForSelector('div[class*="package-card_colClassName"]', {
-            timeout: 5000
+            timeout: 10000
           });
 
           try {
@@ -153,7 +153,7 @@ class TurkcellService {
           await sleep(500);
     
           const debtPopup = await page.waitForSelector('.ant-modal-content', { 
-            timeout: 4500 
+            timeout: 8000 
           }).then(() => page.$eval('.ant-modal-content', el => el.textContent))
             .catch(() => null);
     

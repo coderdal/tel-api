@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telsiz Borç Sorgulama</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            display: none;
+        }
+        .operator-logo {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center mb-0">Telsiz Borç Sorgulama</h3>
+            </div>
+            <div class="card-body">
+                <form id="debtForm">
+                    <div class="mb-3">
+                        <label for="operator" class="form-label">Operatör</label>
+                        <select class="form-select" id="operator" required>
+                            <option value="">Operatör Seçin</option>
+                            <option value="turktelekom">Türk Telekom</option>
+                            <option value="turkcell">Turkcell</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Telefon Numarası</label>
+                        <div class="input-group">
+                            <input type="tel" class="form-control" id="phone" required 
+                                   placeholder="XXX XXX XX XX" maxlength="10"
+                                   pattern="[0-9]{10}">
+                        </div>
+                        <div class="form-text">Örnek: 5XX XXX XX XX (Başında 0 olmadan)</div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Sorgula</button>
+                    </div>
+                </form>
+                <div class="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2">Sorgulama yapılıyor, lütfen bekleyin...</p>
+                </div>
+                <div id="result" class="alert">
+                    <h5 class="alert-heading">Sonuç:</h5>
+                    <pre id="resultText" class="mb-0"></pre>
+                </div>
+                <pre class="mt-2 response"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('debtForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const operator = document.getElementById('operator').value;
+            const phone = document.getElementById('phone').value;
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            const loading = document.querySelector('.loading');
+            const response = document.querySelector('.response');
+            
+            // Telefon numarasını formatla
+            const formattedPhone = phone.replace(/\D/g, '');
+            
+            // Loading göster
+            loading.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch(`https://debt.erdal.net.tr/api/check?operator=${operator}&tel=${formattedPhone}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                // Loading gizle
+                loading.style.display = 'none';
+                resultDiv.style.display = 'block';
+                
+                // JSON yanıtını göster
+                resultText.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.status === 'error') {
+                    resultDiv.className = 'alert alert-danger';
+                } else {
+                    resultDiv.className = 'alert alert-info';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'alert alert-danger';
+                resultText.textContent = 'Bir hata oluştu: ' + error.message;
+            }
+        });
+
+        // Telefon numarası formatlaması
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html> 

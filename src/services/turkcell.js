@@ -7,7 +7,7 @@ class TurkcellService {
   static async checkPackagesAndDebt(phoneNumber) {
     const proxyConfig = getProxyConfig();
     const browser = await puppeteer.launch({
-      headless: 'new',
+      headless: false,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -62,11 +62,9 @@ class TurkcellService {
       });
 
       await page.goto('https://www.turkcell.com.tr/yukle/tl-paket-yukle', {
-        waitUntil: ['domcontentloaded'],
-        timeout: 30000
+        waitUntil: ['domcontentloaded', 'networkidle0'],
+        timeout: 45000
       });
-
-      await sleep(9000);
 
       try {
         await page.waitForSelector('efilli-layout-dynamic', { timeout: 3000 });
@@ -111,6 +109,8 @@ class TurkcellService {
       await page.type('div[class*="AppCaptchaWrapper__captchaControl"] input', captchaSolution, { delay: 50 });
       await sleep(500);
 
+     await sleep(10000);
+
       await page.waitForSelector('button[class*="captchaButton"]', { timeout: 7000 });
       await page.click('button[class*="captchaButton"]');
 
@@ -129,9 +129,23 @@ class TurkcellService {
       };
 
       try {
+          const packagesList = [];
           await page.waitForSelector('div[class*="package-card_colClassName"]', {
             timeout: 5000
           });
+
+          try {
+            await page.waitForSelector('button[class*="select-package-step"]', { timeout: 2000 });
+            await page.click('button[class*="select-package-step"]');
+          } catch (error) {}
+
+          const packages = await page.$$('div[class*="package-card_colClassName"]');
+          for (const pkg of packages) {
+            const packageName = await pkg.$eval('div[class*="content-title"]', el => el.textContent);
+            packagesList.push(packageName);
+          }
+
+          console.log(packagesList);
     
           await page.click('div[class*="package-card_colClassName"]');
           await sleep(500);
@@ -147,7 +161,8 @@ class TurkcellService {
     
           result = {
             hasDebt: false,
-            debtAmount: null
+            debtAmount: null,
+            packages: packagesList
           };
     
           if (debtPopup) {
